@@ -542,7 +542,7 @@ RUN apt install -y ccache software-properties-common git curl sudo htop
 WORKDIR /workspace
 RUN git clone https://github.com/ljwljwljwljw/vllm.git
 WORKDIR vllm
-RUN git checkout dev
+RUN git checkout custom-fa
 RUN uv venv --python 3.12 --seed
 
 # This timeout (in seconds) is necessary when installing some dependencies via uv since it's likely to time out
