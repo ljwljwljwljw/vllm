@@ -37,8 +37,8 @@ if(VLLM_FLASH_ATTN_SRC_DIR)
 else()
   FetchContent_Declare(
           vllm-flash-attn
-          GIT_REPOSITORY https://github.com/vllm-project/flash-attention.git
-          GIT_TAG 57b4e68b9f9d94750b46de8f8dbd2bfcc86edd4f
+          GIT_REPOSITORY https://github.com/ljwljwljwljw/flash-attention.git
+          GIT_TAG 7ce0ffede8b50f4845ac3201b2be82dbbd94b3f3
           GIT_PROGRESS TRUE
           # Don't share the vllm-flash-attn build between build types
           BINARY_DIR ${CMAKE_BINARY_DIR}/vllm-flash-attn
@@ -75,9 +75,9 @@ install(
   FILES_MATCHING PATTERN "*.py"
 )
 
-install(
-  DIRECTORY ${vllm-flash-attn_SOURCE_DIR}/vllm_flash_attn/
-  DESTINATION vllm/vllm_flash_attn
-  COMPONENT _vllm_fa3_C
-  FILES_MATCHING PATTERN "*.py"
-)
+# install(
+#   DIRECTORY ${vllm-flash-attn_SOURCE_DIR}/vllm_flash_attn/
+#   DESTINATION vllm/vllm_flash_attn
+#   COMPONENT _vllm_fa3_C
+#   FILES_MATCHING PATTERN "*.py"
+# )

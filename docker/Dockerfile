@@ -531,3 +531,37 @@ FROM vllm-openai-base AS vllm-openai
 
 ENTRYPOINT ["python3", "-m", "vllm.entrypoints.openai.api_server"]
 #################### OPENAI API SERVER ####################
+
+
+#################### SOURCE BUILD IMAGE ####################
+FROM base AS vllm-source-build
+
+RUN apt install -y ccache software-properties-common git curl sudo htop
+
+# Build vLLM from source
+WORKDIR /workspace
+RUN git clone https://github.com/vllm-project/vllm.git
+WORKDIR vllm
+RUN git checkout v0.10.1
+RUN uv venv --python 3.12 --seed
+
+# This timeout (in seconds) is necessary when installing some dependencies via uv since it's likely to time out
+# Reference: https://github.com/astral-sh/uv/pull/1694
+ENV UV_HTTP_TIMEOUT=500
+ENV UV_INDEX_STRATEGY="unsafe-best-match"
+# Use copy mode to avoid hardlink failures with Docker cache mounts
+ENV UV_LINK_MODE=copy
+
+ENV PATH="/workspace/vllm/.venv/bin:$PATH"
+
+ENV VLLM_USE_PRECOMPILED=1
+# https://docs.vllm.ai/en/latest/contributing/incremental_build.html
+RUN uv pip install -e . --torch-backend=auto
+RUN uv pip install -r requirements/build.txt --torch-backend=auto
+RUN uv pip install 'openai<1.100.0'
+RUN python tools/generate_cmake_presets.py
+RUN cmake --preset release
+RUN cmake --build --preset release --target install
+
+RUN uv pip install lm-eval[api]
+ENTRYPOINT []
