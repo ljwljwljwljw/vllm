@@ -540,9 +540,9 @@ RUN apt install -y ccache software-properties-common git curl sudo htop
 
 # Build vLLM from source
 WORKDIR /workspace
-RUN git clone https://github.com/vllm-project/vllm.git
+RUN git clone https://github.com/ljwljwljwljw/vllm.git
 WORKDIR vllm
-RUN git checkout v0.10.1
+RUN git checkout dev
 RUN uv venv --python 3.12 --seed
 
 # This timeout (in seconds) is necessary when installing some dependencies via uv since it's likely to time out
@@ -554,9 +554,8 @@ ENV UV_LINK_MODE=copy
 
 ENV PATH="/workspace/vllm/.venv/bin:$PATH"
 
-ENV VLLM_USE_PRECOMPILED=1
 # https://docs.vllm.ai/en/latest/contributing/incremental_build.html
-RUN uv pip install -e . --torch-backend=auto
+RUN VLLM_USE_PRECOMPILED=1 uv pip install -e . --torch-backend=auto
 RUN uv pip install -r requirements/build.txt --torch-backend=auto
 RUN uv pip install 'openai<1.100.0'
 RUN python tools/generate_cmake_presets.py
